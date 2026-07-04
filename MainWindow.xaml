@@ -1,0 +1,303 @@
+﻿<Window x:Class="StokTakip.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Stok Takip" Height="620" Width="960"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <Style x:Key="DusukStokSatir" TargetType="DataGridRow">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding DusukStokMu}" Value="True">
+                    <Setter Property="Background" Value="#FFEBEE"/>
+                    <Setter Property="Foreground" Value="#C62828"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#1565C0" Padding="20,14">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="📦" FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBlock Text="Stok Takip Uygulaması"
+                           FontSize="20" FontWeight="Bold"
+                           Foreground="White" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+
+        <TabControl Grid.Row="1" Margin="12" x:Name="tabMain">
+
+            <!-- SEKME 1: Ürünler -->
+            <TabItem Header="📦  Ürünler">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,10,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox x:Name="txtArama" Grid.Column="0"
+                                 Padding="8,6" FontSize="14"
+                                 TextChanged="txtArama_TextChanged"/>
+
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="12,0,0,0">
+                            <Button Content="➕  Ekle" Click="Ekle_Click"
+                                    Padding="14,7" Margin="0,0,8,0"
+                                    Background="#43A047" Foreground="White"
+                                    BorderThickness="0" FontSize="13" FontWeight="Bold"/>
+                            <Button Content="✏️  Düzenle" Click="Duzenle_Click"
+                                    Padding="14,7" Margin="0,0,8,0"
+                                    Background="#FB8C00" Foreground="White"
+                                    BorderThickness="0" FontSize="13" FontWeight="Bold"/>
+                            <Button Content="🗑️  Sil" Click="Sil_Click"
+                                    Padding="14,7"
+                                    Background="#E53935" Foreground="White"
+                                    BorderThickness="0" FontSize="13" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <DataGrid Grid.Row="1" x:Name="dgUrunler"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False" IsReadOnly="True"
+                              RowStyle="{StaticResource DusukStokSatir}"
+                              SelectionMode="Single"
+                              GridLinesVisibility="Horizontal"
+                              BorderBrush="#DDD" BorderThickness="1"
+                              RowHeight="36" FontSize="13"
+                              ColumnHeaderHeight="38"
+                              HorizontalScrollBarVisibility="Auto"
+                              ColumnWidth="*"
+                              MinColumnWidth="60">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80" MinWidth="60"/>
+                            <DataGridTextColumn Header="Ürün Adı" Binding="{Binding Ad}" Width="2*" MinWidth="160"/>
+                            <DataGridTextColumn Header="Kategori" Binding="{Binding Kategori}" Width="1.2*" MinWidth="100"/>
+                            <DataGridTextColumn Header="Birim Fiyat (₺)" Binding="{Binding Fiyat, StringFormat=N2}" Width="120" MinWidth="80"/>
+                            <DataGridTextColumn Header="Stok" Binding="{Binding StokAdedi}" Width="90" MinWidth="60"/>
+                            <DataGridTextColumn Header="Min. Stok" Binding="{Binding MinimumStok}" Width="90" MinWidth="60"/>
+                            <DataGridTemplateColumn Header="Durum" Width="120" MinWidth="80">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock HorizontalAlignment="Center" FontWeight="Bold">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Text" Value="✅ Yeterli"/>
+                                                    <Setter Property="Foreground" Value="#2E7D32"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding DusukStokMu}" Value="True">
+                                                            <Setter Property="Text" Value="⚠️ Düşük"/>
+                                                            <Setter Property="Foreground" Value="#C62828"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- SEKME 2: Faturalar -->
+            <TabItem Header="🧾  Faturalar">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,10,0,10">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="➕  Yeni Fatura" Click="FaturaEkle_Click"
+                                    Padding="14,7" Margin="0,0,8,0"
+                                    Background="#1565C0" Foreground="White"
+                                    BorderThickness="0" FontSize="13" FontWeight="Bold"/>
+                            <Button Content="✏️  Düzenle" Click="FaturaDuzenle_Click"
+                                    Padding="14,7" Margin="0,0,8,0"
+                                    Background="#FB8C00" Foreground="White"
+                                    BorderThickness="0" FontSize="13" FontWeight="Bold"/>
+                            <Button Content="🗑️  Sil" Click="FaturaSil_Click"
+                                    Padding="14,7"
+                                    Background="#E53935" Foreground="White"
+                                    BorderThickness="0" FontSize="13" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <DataGrid Grid.Row="1" x:Name="dgFaturalar"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False" IsReadOnly="True"
+                              SelectionMode="Single"
+                              GridLinesVisibility="Horizontal"
+                              BorderBrush="#DDD" BorderThickness="1"
+                              RowHeight="36" FontSize="13"
+                              ColumnHeaderHeight="38"
+                              HorizontalScrollBarVisibility="Auto"
+                              ColumnWidth="*"
+                              MinColumnWidth="60">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Fatura No" Binding="{Binding FaturaNo}" Width="100" MinWidth="80"/>
+                            <DataGridTextColumn Header="Tedarikçi" Binding="{Binding Tedarikci}" Width="2*" MinWidth="140"/>
+                            <DataGridTextColumn Header="Ürün" Binding="{Binding UrunAdi}" Width="1.5*" MinWidth="120"/>
+                            <DataGridTextColumn Header="Tarih" Binding="{Binding GelisTarihi, StringFormat=dd.MM.yyyy}" Width="110" MinWidth="90"/>
+                            <DataGridTextColumn Header="Miktar" Binding="{Binding Miktar}" Width="80" MinWidth="60"/>
+                            <DataGridTextColumn Header="Birim ₺" Binding="{Binding BirimFiyat, StringFormat=N2}" Width="100" MinWidth="80"/>
+                            <DataGridTextColumn Header="İsk. %" Binding="{Binding IskontoYuzdesi, StringFormat=N0}" Width="80" MinWidth="60"/>
+                            <DataGridTextColumn Header="KDV %" Binding="{Binding KdvYuzdesi, StringFormat=N0}" Width="80" MinWidth="60"/>
+                            <DataGridTextColumn Header="Net Tutar" Binding="{Binding NetTutar, StringFormat=N2}" Width="1*" MinWidth="100"/>
+                            <DataGridTextColumn Header="KDV ₺" Binding="{Binding KdvTutari, StringFormat=N2}" Width="100" MinWidth="80"/>
+                            <DataGridTextColumn Header="Genel Toplam" Binding="{Binding GenelToplam, StringFormat=N2}" Width="1*" MinWidth="120"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- SEKME 3: Raporlar -->
+            <TabItem Header="📊  Aylık Raporlar">
+                <Grid Margin="0,10,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,12">
+                        <TextBlock Text="Yıl:" FontSize="14" Foreground="#555"
+                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <ComboBox x:Name="cmbYil" Width="100" FontSize="14"
+                                  SelectionChanged="cmbYil_SelectionChanged"/>
+                    </StackPanel>
+
+                    <Grid Grid.Row="1" Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="#E3F2FD" CornerRadius="8"
+                                Padding="16,12" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Yıllık Toplam Harcama"
+                                           FontSize="12" Foreground="#1565C0" Margin="0,0,0,6"/>
+                                <TextBlock x:Name="lblYillikToplam"
+                                           FontSize="22" FontWeight="Bold" Foreground="#1565C0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Background="#E8F5E9" CornerRadius="8"
+                                Padding="16,12" Margin="0,0,8,0">
+                            <StackPanel>
+                                <TextBlock Text="Yıllık Toplam Ürün Girişi"
+                                           FontSize="12" Foreground="#2E7D32" Margin="0,0,0,6"/>
+                                <TextBlock x:Name="lblYillikUrun"
+                                           FontSize="22" FontWeight="Bold" Foreground="#2E7D32"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Background="#FFF3E0" CornerRadius="8"
+                                Padding="16,12">
+                            <StackPanel>
+                                <TextBlock Text="Toplam Fatura Sayısı"
+                                           FontSize="12" Foreground="#E65100" Margin="0,0,0,6"/>
+                                <TextBlock x:Name="lblYillikFatura"
+                                           FontSize="22" FontWeight="Bold" Foreground="#E65100"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <DataGrid Grid.Row="2" x:Name="dgRapor"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False" IsReadOnly="True"
+                              GridLinesVisibility="Horizontal"
+                              BorderBrush="#DDD" BorderThickness="1"
+                              RowHeight="36" FontSize="13"
+                              ColumnHeaderHeight="38"
+                              ColumnWidth="*"
+                              MinColumnWidth="60"
+                              HorizontalScrollBarVisibility="Auto">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Ay" Binding="{Binding AyAdi}" Width="1.5*" MinWidth="120"/>
+                            <DataGridTextColumn Header="Fatura Sayısı" Binding="{Binding FaturaSayisi}" Width="*" MinWidth="80"/>
+                            <DataGridTextColumn Header="Toplam Ürün Adedi" Binding="{Binding ToplamUrunAdedi}" Width="*" MinWidth="100"/>
+                            <DataGridTextColumn Header="Ara Toplam (₺)" Binding="{Binding AraToplam, StringFormat=N2}" Width="*" MinWidth="110"/>
+                            <DataGridTextColumn Header="Toplam İskonto (₺)" Binding="{Binding ToplamIskonto, StringFormat=N2}" Width="*" MinWidth="110"/>
+                            <DataGridTextColumn Header="Toplam KDV (₺)" Binding="{Binding ToplamKdv, StringFormat=N2}" Width="*" MinWidth="110"/>
+                            <DataGridTextColumn Header="Genel Toplam (₺)" Binding="{Binding GenelToplam, StringFormat=N2}" Width="*" MinWidth="120"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding BuAyMi}" Value="True">
+                                        <Setter Property="Background" Value="#E3F2FD"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <!-- SEKME 4: Yıllık Özet -->
+            <TabItem Header="📈  Yıllık Özet">
+                <Grid Margin="0,10,0,0">
+                    <DataGrid x:Name="dgYillik"
+                              AutoGenerateColumns="False"
+                              CanUserAddRows="False" IsReadOnly="True"
+                              GridLinesVisibility="Horizontal"
+                              BorderBrush="#DDD" BorderThickness="1"
+                              RowHeight="36" FontSize="13"
+                              ColumnHeaderHeight="38"
+                              ColumnWidth="*"
+                              MinColumnWidth="60"
+                              HorizontalScrollBarVisibility="Auto">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Yıl" Binding="{Binding Yil}" Width="100" MinWidth="80"/>
+                            <DataGridTextColumn Header="Fatura Sayısı" Binding="{Binding FaturaSayisi}" Width="*" MinWidth="80"/>
+                            <DataGridTextColumn Header="Toplam Ürün Adedi" Binding="{Binding ToplamUrunAdedi}" Width="*" MinWidth="100"/>
+                            <DataGridTextColumn Header="Ara Toplam (₺)" Binding="{Binding AraToplam, StringFormat=N2}" Width="*" MinWidth="110"/>
+                            <DataGridTextColumn Header="Toplam İskonto (₺)" Binding="{Binding ToplamIskonto, StringFormat=N2}" Width="*" MinWidth="110"/>
+                            <DataGridTextColumn Header="Toplam KDV (₺)" Binding="{Binding ToplamKdv, StringFormat=N2}" Width="*" MinWidth="110"/>
+                            <DataGridTextColumn Header="Genel Toplam (₺)" Binding="{Binding GenelToplam, StringFormat=N2}" Width="*" MinWidth="120"/>
+                        </DataGrid.Columns>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding BuYilMi}" Value="True">
+                                        <Setter Property="Background" Value="#E3F2FD"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <Border Grid.Row="2" Background="#F5F5F5"
+                BorderBrush="#DDD" BorderThickness="0,1,0,0" Padding="16,8">
+            <Grid>
+                <TextBlock x:Name="lblToplamUrun"
+                           FontSize="13" Foreground="#555" VerticalAlignment="Center"/>
+                <TextBlock x:Name="lblDusukStok"
+                           HorizontalAlignment="Right"
+                           FontSize="13" Foreground="#C62828" FontWeight="Bold"
+                           VerticalAlignment="Center"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

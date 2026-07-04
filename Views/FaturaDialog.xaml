@@ -1,0 +1,137 @@
+﻿<Window x:Class="StokTakip.Views.FaturaDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Fatura Bilgileri" Height="600" Width="440"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+
+    <Window.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="0,4,0,10"/>
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#555"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0,2,0,0"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Margin" Value="0,4,0,10"/>
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Label Content="Fatura No"/>
+                <TextBox x:Name="txtFaturaNo"/>
+
+                <Label Content="Tedarikçi"/>
+                <TextBox x:Name="txtTedarikci" TextChanged="txtTedarikci_TextChanged"/>
+
+                <Label Content="Ürün Adı"/>
+                <TextBox x:Name="cmbUrun" TextChanged="cmbUrun_TextChanged"/>
+
+                <Label Content="Kategori"/>
+                <TextBox x:Name="txtKategori"/>
+
+                <Label Content="Geliş Tarihi"/>
+                <DatePicker x:Name="dpTarih" Margin="0,4,0,10" FontSize="13"/>
+
+                <Label Content="Miktar"/>
+                <TextBox x:Name="txtMiktar" TextChanged="Hesapla"/>
+
+                <Label Content="Birim Fiyat (₺)"/>
+                <TextBox x:Name="txtBirimFiyat" TextChanged="Hesapla"/>
+
+                <Label Content="İskonto (%)"/>
+                <TextBox x:Name="txtIskonto" Text="0" TextChanged="Hesapla"/>
+
+                <Label Content="KDV (%)"/>
+                <ComboBox x:Name="cmbKdv" SelectionChanged="cmbKdv_SelectionChanged">
+                    <ComboBoxItem Content="0"/>
+                    <ComboBoxItem Content="1"/>
+                    <ComboBoxItem Content="10"/>
+                    <ComboBoxItem Content="20"/>
+                </ComboBox>
+
+                <Label Content="Minimum Stok (uyarı eşiği)"/>
+                <TextBox x:Name="txtMinStok" Text="5"/>
+
+                <Border Background="#F5F5F5" BorderBrush="#DDD"
+                        BorderThickness="1" CornerRadius="6"
+                        Padding="12" Margin="0,4,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="6"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Ara Toplam"
+                                   FontSize="13" Foreground="#666" Margin="0,2"/>
+                        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="lblAraToplam"
+                                   FontSize="13" Foreground="#666" Margin="0,2"/>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="İskonto"
+                                   FontSize="13" Foreground="#E53935" Margin="0,2"/>
+                        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="lblIskonto"
+                                   FontSize="13" Foreground="#E53935" Margin="0,2"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Net Tutar"
+                                   FontSize="13" Foreground="#666" Margin="0,2"/>
+                        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="lblNetTutar"
+                                   FontSize="13" Foreground="#666" Margin="0,2"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="KDV"
+                                   FontSize="13" Foreground="#666" Margin="0,2"/>
+                        <TextBlock Grid.Row="3" Grid.Column="1" x:Name="lblKdv"
+                                   FontSize="13" Foreground="#666" Margin="0,2"/>
+
+                        <Border Grid.Row="4" Grid.ColumnSpan="2"
+                                Background="#CCC" Height="1" Margin="0,4"/>
+
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="GENEL TOPLAM"
+                                   FontSize="14" FontWeight="Bold"
+                                   Foreground="#1565C0" Margin="0,4,0,0"/>
+                        <TextBlock Grid.Row="5" Grid.Column="1" x:Name="lblGenelToplam"
+                                   FontSize="14" FontWeight="Bold"
+                                   Foreground="#1565C0" Margin="0,4,0,0"/>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="1" Background="#FFF9C4" BorderBrush="#F9A825"
+                BorderThickness="1" CornerRadius="4" Padding="8,6"
+                Margin="0,10,0,0" x:Name="pnlUyari" Visibility="Collapsed">
+            <TextBlock x:Name="lblUyari" FontSize="12"
+                       Foreground="#F57F17" TextWrapping="Wrap"/>
+        </Border>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal"
+                    HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="İptal" Width="80" Margin="0,0,8,0"
+                    Click="Iptal_Click" Padding="8,6"/>
+            <Button Content="Kaydet" Width="80"
+                    Click="Kaydet_Click" Padding="8,6"
+                    Background="#1565C0" Foreground="White" BorderThickness="0"/>
+        </StackPanel>
+    </Grid>
+</Window>
